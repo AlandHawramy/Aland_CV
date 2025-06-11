@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aland Wasim - Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes patternMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.015) 25%, transparent 25%),
+                              linear-gradient(-45deg, rgba(255, 255, 255, 0.015) 25%, transparent 25%),
+                              linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.015) 75%),
+                              linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.015) 75%);
+            background-size: 60px 60px;
+            animation: patternMove 80s linear infinite;
+            z-index: -1;
+            opacity: 0.08;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+        
+        .modal { transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; }
+        .modal.hidden { opacity: 0; visibility: hidden; }
+        .modal-content { transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; }
+        .modal.hidden .modal-content { transform: scale(0.95) translateY(10px); }
+        
+        .section-card {
+            background: rgba(30, 41, 59, 0.7); 
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(55, 65, 81, 0.7);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        }
+        .section-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            background: rgba(51, 65, 85, 0.75); 
+        }
+        .profile-card-hover:hover {
+             box-shadow: 0 15px 35px rgba(6,182,212,0.2); /* Cyan shadow (Tailwind cyan-500) */
+        }
+
+        /* --- Updated button styles for gradient animation --- */
+        .view-more-btn {
+            --button-grad-start: #06B6D4; /* Tailwind cyan-500 */
+            --button-grad-end: #2563EB;   /* Tailwind blue-600 */
+            background-image: linear-gradient(to right, var(--button-grad-start) 0%, var(--button-grad-end) 50%, var(--button-grad-start) 100%);
+            background-size: 200% 100%;
+            background-position: 0% 50%;
+            transition: background-position 0.6s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(6,182,212,0.15);
+        }
+
+        .view-more-btn:hover {
+            background-position: 100% 50%;
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(6,182,212,0.25);
+        }
+
+        .work-category-btn[data-active="true"] {
+            --button-grad-start: #06B6D4; /* Tailwind cyan-500 */
+            --button-grad-end: #2563EB;   /* Tailwind blue-600 */
+            background-image: linear-gradient(to right, var(--button-grad-start) 0%, var(--button-grad-end) 50%, var(--button-grad-start) 100%);
+            background-size: 200% 100%;
+            background-position: 0% 50%;
+            transition: background-position 0.6s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(6,182,212,0.15);
+        }
+
+        .work-category-btn[data-active="true"]:hover {
+            background-position: 100% 50%;
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(6,182,212,0.25);
+        }
+
+        /* --- Start of Slider CSS from first code, adapted for colors and context --- */
+        .gallery-container {
+            max-width: 1000px; /* Max width suitable for larger screens within the modal */
+            width: 100%;
+            position: relative;
+            margin: 0 auto; /* Center the container horizontally */
+            /* Removed original padding/centering, modal flex handles main layout */
+        }
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 400px; /* Fixed height for the slider area */
+            overflow: hidden;
+            display: flex;
+            align-items: center; /* Vertically centers slides */
+            justify-content: center;
+             background: transparent; /* Ensure no conflicting background */
+        }
+
+        .slides-wrapper {
+            display: flex;
+            height: 280px; /* Height of individual slides content area */
+            transition: none; /* JS handles transform animation */
+            position: relative;
+            will-change: transform; /* Optimization */
+        }
+
+         /* JS Width: 300px + 10px + 10px = 320px */
+        .slide {
+            flex: 0 0 300px; /* Base slide width (content + internal padding/border) */
+            height: 280px; /* Match slides-wrapper height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px; /* Spacing between slides (total 20px per slide) */
+            position: relative;
+        }
+
+        .slide-content {
+            width: 280px; /* Actual size of the visible image/content area */
+            height: 280px; /* Match height */
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #475569; /* Tailwind slate-600 - Default slide background */
+            overflow: hidden; /* Hide any overflow from the image */
+             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .slide-content img {
+            display: block; /* Prevents extra space below image */
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cover the content area, cropping if necessary */
+             /* border-radius: 8px; */ /* removed, overflow:hidden on parent handles it */
+             transition: transform 0.3s ease;
+        }
+
+        /* Center slide (active) styling - uses cyan theme colors */
+        .slide.center .slide-content {
+            /* background: #06B6D4 !important; /* Tailwind cyan-500 - Use if you want background */
+            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.4); /* Cyan shadow for active slide */
+             border: 2px solid #06B6D4;
+              transform: scale(1.05);
+        }
+         .slide.center .slide-content img {
+           /* transform: scale(1.02); */
+         }
+
+
+        /* Navigation Arrows */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(241, 245, 249, 0.9); /* Slate-100 / Slightly transparent white */
+            border: none;
+            color: #1e293b; /* Slate-800 */
+            width: 50px; /* Reduced size slightly */
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            z-index: 100; /* Ensure arrows are above slides */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+             opacity: 0.8;
+        }
+
+        .nav-arrow:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+             opacity: 1;
+        }
+
+        /* Positioning relative to slider-container */
+        .nav-arrow.prev {
+            left: 15px; /* Moved closer to edge */
+        }
+
+        .nav-arrow.next {
+            right: 15px; /* Moved closer to edge */
+        }
+
+        /* Dots Indicator */
+        .dots-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px; /* Reduced margin to fit better in modal */
+             padding-bottom: 10px;
+        }
+
+        .dot {
+            width: 10px; /* slightly smaller */
+            height: 10px;
+            border-radius: 50%;
+            background: #475569; /* Tailwind slate-600 - Default dot background */
+            cursor: pointer;
+            transition: all 0.3s ease;
+             box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .dot.active {
+            background: #06B6D4; /* Tailwind cyan-500 - Active dot background */
+            transform: scale(1.3);
+             width: 12px;
+             height: 12px;
+        }
+
+        /* Responsive Design - Adjustments based on screen width */
+        @media (max-width: 768px) {
+             /* Adjust slider container height */
+            .slider-container {
+                 height: 320px; 
+            }
+            /* Adjust slide and slide content height */
+             .slides-wrapper,
+             .slide {
+                  height: 220px;
+             }
+              .slide-content {
+                 height: 220px; 
+                 width: 230px;
+             }
+             /* JS Width: 250px + 10px + 10px = 270px */
+            .slide {
+                flex: 0 0 250px; 
+                margin: 0 10px;
+            }
+            
+            /* Adjust arrow size */
+            .nav-arrow {
+                width: 45px;
+                height: 45px;
+                font-size: 22px;
+                 /* FIX: Removed generic left/right */
+            }
+             /* FIX: Target specific arrows for position */
+             .nav-arrow.prev {
+                 left: 10px; 
+             }
+              .nav-arrow.next {
+                 right: 10px;
+             }
+               .dots-container {
+                 margin-top: 10px;
+             }
+        }
+
+        @media (max-width: 480px) {
+             /* Adjust slider container height */
+            .slider-container {
+                 height: 260px; 
+            }
+             /* Adjust slide and slide content height */
+              .slides-wrapper,
+              .slide {
+                  height: 180px;
+             }
+              .slide-content {
+                 height: 180px; 
+                 width: 180px;
+             }
+
+             /* JS Width: 200px + 10px + 10px = 220px */
+            .slide {
+                flex: 0 0 200px; 
+                margin: 0 10px;
+            }
+            
+             /* Adjust arrow size and position */
+            .nav-arrow {
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+                /* FIX: Removed generic left/right */
+            }
+             /* FIX: Target specific arrows for position */
+             .nav-arrow.prev {
+                  left: 5px;
+             }
+             .nav-arrow.next {
+                 right: 5px;
+            }
+        }
+        /* --- End of Slider CSS --- */
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 font-sans antialiased">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl relative z-10">
+        
+        <div class="banner h-40 md:h-56 bg-cover bg-center rounded-t-2xl shadow-2xl" style="background-image: url('https://i.pinimg.com/736x/06/c1/b1/06c1b194e2d3dce4d629c71269498d98.jpg');"></div>
+        
+        <div class="profile -mt-8 md:-mt-12 relative z-20">
+            <div class="section-card profile-card-hover rounded-2xl p-6 md:p-8 text-center">
+                <div class="relative w-32 h-32 md:w-40 md:h-40 mx-auto mb-6">
+                    <div class="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 p-1 shadow-lg">
+                         <!-- Ensure image path is correct -->
+                        <img src="images/aland.png" alt="Profile" class="w-full h-full rounded-full object-cover border-4 border-slate-800" style="background-color: #1e293b;">
+                    </div>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">Aland Wasim</h1>
+                <p class="text-cyan-400 mb-6 text-lg">Designer & Web Developer & MotionGraphic</p>
+                
+                <div class="social-links grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl mx-auto">
+                    <a href="mailto:alandwasim486@gmail.com" class="group flex items-center justify-center p-3 rounded-lg bg-slate-700/70 hover:bg-slate-600/90 transition-all duration-300 text-sm text-slate-300 hover:text-white">
+                        <i class="fas fa-envelope w-6 text-xl mr-3 text-cyan-400 group-hover:text-cyan-300 transition-colors"></i>
+                        <span>alandwasim486@gmail.com</span>
+                    </a>
+                    <a href="tel:+9647511833696" class="group flex items-center justify-center p-3 rounded-lg bg-slate-700/70 hover:bg-slate-600/90 transition-all duration-300 text-sm text-slate-300 hover:text-white">
+                        <i class="fas fa-phone w-6 text-xl mr-3 text-cyan-400 group-hover:text-cyan-300 transition-colors"></i>
+                        <span>0751 183 3696</span>
+                    </a>
+                    <a href="https://www.google.com/maps/place/Halabja" target="_blank" class="group flex items-center justify-center p-3 rounded-lg bg-slate-700/70 hover:bg-slate-600/90 transition-all duration-300 text-sm text-slate-300 hover:text-white sm:col-span-2 lg:col-span-1">
+                        <i class="fas fa-map-marker-alt w-6 text-xl mr-3 text-cyan-400 group-hover:text-cyan-300 transition-colors"></i>
+                        <span>Halabja, Kurdistan Region</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+
+            <div class="section-card rounded-xl p-6" id="education-main">
+                <h2 class="text-2xl font-semibold text-white mb-4 border-b-2 border-cyan-500 pb-2 inline-block">Education</h2>
+                <div class="education-item mb-4">
+                    <h3 class="text-lg font-semibold text-cyan-300">UNIVERSITY OF SULAIMANI</h3>
+                    <div class="text-sm text-slate-400 my-1">2021 - 2025</div>
+                    <p class="text-slate-300">Bachelor's Degree Information Technology</p>
+                </div>
+                <button class="view-more-btn text-white font-medium py-2 px-4 rounded-lg text-sm" onclick="openModal('education-modal')">View More</button>
+            </div>
+
+            <div class="section-card rounded-xl p-6" id="experience-main">
+                <h2 class="text-2xl font-semibold text-white mb-4 border-b-2 border-cyan-500 pb-2 inline-block">Work Experience</h2>
+                <div class="experience-item mb-4">
+                    <h3 class="text-lg font-semibold text-cyan-300">Designer & VideoEditing</h3>
+                    <div class="text-sm text-slate-400 my-1">2023/10/3 - 2024/1/3</div>
+                    <p class="text-slate-300">World schengen</p>
+                    <ul class="list-disc list-inside text-slate-400 mt-2 text-sm space-y-1 pl-4">
+                        <li>Logo and branding design</li>
+                    </ul>
+                </div>
+                <button class="view-more-btn text-white font-medium py-2 px-4 rounded-lg text-sm" onclick="openModal('experience-modal')">View More</button>
+            </div>
+
+            <div class="section-card rounded-xl p-6" id="volunteer-main">
+                <h2 class="text-2xl font-semibold text-white mb-4 border-b-2 border-cyan-500 pb-2 inline-block">Volunteer Experience</h2>
+                <div class="volunteer-item mb-4">
+                    <h3 class="text-lg font-semibold text-cyan-300">Summer Internship Trainee</h3>
+                    <div class="text-sm text-slate-400 my-1">Summer 2024</div>
+                    <p class="text-slate-300">Halabja Bank</p>
+                     <ul class="list-disc list-inside text-slate-400 mt-2 text-sm space-y-1 pl-4">
+                        <li>Assisted in daily banking operations.</li>
+                    </ul>
+                </div>
+                <button class="view-more-btn text-white font-medium py-2 px-4 rounded-lg text-sm" onclick="openModal('volunteer-modal')">View More</button>
+            </div>
+
+            <div class="section-card rounded-xl p-6" id="skills-main">
+                <h2 class="text-2xl font-semibold text-white mb-4 border-b-2 border-cyan-500 pb-2 inline-block">Skills</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm mb-4">
+                    <span class="bg-slate-700 text-cyan-300 px-3 py-1.5 rounded-md text-center">Photoshop</span>
+                    <span class="bg-slate-700 text-cyan-300 px-3 py-1.5 rounded-md text-center">PremierPro</span>
+                    <span class="bg-slate-700 text-cyan-300 px-3 py-1.5 rounded-md text-center">AfterEffect</span>
+                    <span class="bg-slate-700 text-cyan-300 px-3 py-1.5 rounded-md text-center">HTML/CSS</span>
+                    <span class="bg-slate-700 text-cyan-300 px-3 py-1.5 rounded-md text-center">JavaScript</span>
+                    <span class="bg-slate-700 text-cyan-300 px-3 py-1.5 rounded-md text-center">SQL</span>
+                </div>
+                <button class="view-more-btn text-white font-medium py-2 px-4 rounded-lg text-sm" onclick="openModal('skills-modal')">View More</button>
+            </div>
+            
+            <div class="section-card rounded-xl p-6 md:col-span-2" id="certificates-main">
+                <h2 class="text-2xl font-semibold text-white mb-4 border-b-2 border-cyan-500 pb-2 inline-block">Certificates & Courses</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <a href="https://www.udemy.com/certificate/UC-261985f7-d990-4b92-887a-9fb269d7bc58/" target="_blank" class="block p-3 bg-slate-700/80 rounded-lg hover:bg-slate-600/90 transition group">
+                        <h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-sm">Adobe After Effects: From Beginner to Motion Master</h3>
+                        <div class="text-xs text-slate-400 mt-1">2024 - Udemy</div>
+                    </a>
+                    <a href="https://www.udemy.com/certificate/UC-1a55054a-a610-4b99-a090-e9a0b2939dfb/" target="_blank" class="block p-3 bg-slate-700/80 rounded-lg hover:bg-slate-600/90 transition group">
+                        <h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-sm">Computer Networks Fundamentals</h3>
+                        <div class="text-xs text-slate-400 mt-1">2024 - Udemy</div>
+                    </a>
+                </div>
+                <button class="view-more-btn text-white font-medium py-2 px-4 rounded-lg text-sm" onclick="openModal('certificates-modal')">View More</button>
+            </div>
+
+            <div class="section-card rounded-xl p-6 md:col-span-2" id="work-examples-main">
+                <h2 class="text-2xl font-semibold text-white mb-6 border-b-2 border-cyan-500 pb-2 inline-block">My Work Examples</h2>
+                <div class="flex justify-center gap-4 mb-4">
+                    <button class="work-category-btn text-white font-semibold py-2 px-6 rounded-lg bg-slate-700 hover:bg-slate-600 transition" data-category="design" onclick="openWorkModal('design-modal'); activateButton(this);" data-active="true">Design</button>
+                    <button class="work-category-btn text-white font-semibold py-2 px-6 rounded-lg bg-slate-700 hover:bg-slate-600 transition" data-category="web" onclick="openWorkModal('web-modal'); activateButton(this);">Web</button>
+                </div>
+                <p class="text-center text-slate-400 text-sm">Click a category to see examples.</p>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Modals (Existing modals remain the same) -->
+    <div id="education-modal" class="modal hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-6 sm:p-8 z-50" onclick="closeModalIfOutside(event, 'education-modal')">
+        <div class="modal-content bg-slate-800 text-slate-200 p-6 rounded-xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto relative border border-cyan-500/30">
+            <button class="absolute top-4 right-4 text-slate-400 hover:text-white transition text-2xl leading-none" onclick="closeModal('education-modal')">×</button>
+            <h2 class="text-2xl font-semibold text-white mb-6">Education</h2>
+            <div class="education-item">
+                <h3 class="text-xl font-semibold text-cyan-300">UNIVERSITY OF SULAIMANI</h3>
+                <div class="text-md text-slate-400 my-1">2021 - 2025</div>
+                <p class="text-slate-300">Bachelor's Degree Information Technology</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="experience-modal" class="modal hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-6 sm:p-8 z-50" onclick="closeModalIfOutside(event, 'experience-modal')">
+        <div class="modal-content bg-slate-800 text-slate-200 p-6 rounded-xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto relative border border-cyan-500/30">
+            <button class="absolute top-4 right-4 text-slate-400 hover:text-white transition text-2xl leading-none" onclick="closeModal('experience-modal')">×</button>
+            <h2 class="text-2xl font-semibold text-white mb-6">Work Experience</h2>
+            <div class="space-y-6">
+                <div class="experience-item">
+                    <h3 class="text-xl font-semibold text-cyan-300">Designer & VideoEditing</h3>
+                    <div class="text-md text-slate-400 my-1">2023/10/3 - 2024/1/3</div>
+                    <p class="text-slate-300 font-medium">World schengen</p>
+                    <ul class="list-disc list-inside text-slate-400 mt-2 space-y-1 pl-4">
+                        <li>Logo and branding design</li>
+                        <li>Designing social media images</li>
+                        <li>Design banners and posters</li>
+                        <li>Short video editing</li>
+                    </ul>
+                </div>
+                <div class="experience-item border-t border-slate-700 pt-6">
+                    <h3 class="text-xl font-semibold text-cyan-300">Designer</h3>
+                    <div class="text-md text-slate-400 my-1">2023/9/27 - 2023/10/30</div>
+                    <p class="text-slate-300 font-medium">Bevarly Travel</p>
+                    <ul class="list-disc list-inside text-slate-400 mt-2 space-y-1 pl-4">
+                        <li>Designing social media images</li>
+                        <li>Design banners and posters</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="volunteer-modal" class="modal hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-6 sm:p-8 z-50" onclick="closeModalIfOutside(event, 'volunteer-modal')">
+        <div class="modal-content bg-slate-800 text-slate-200 p-6 rounded-xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto relative border border-cyan-500/30">
+            <button class="absolute top-4 right-4 text-slate-400 hover:text-white transition text-2xl leading-none" onclick="closeModal('volunteer-modal')">×</button>
+            <h2 class="text-2xl font-semibold text-white mb-6">Volunteer Experience</h2>
+            <div class="space-y-6">
+                <div class="volunteer-item">
+                    <h3 class="text-xl font-semibold text-cyan-300">Summer Internship Trainee</h3>
+                    <div class="text-md text-slate-400 my-1">Summer 2024</div>
+                    <p class="text-slate-300 font-medium">Halabja Bank</p>
+                    <ul class="list-disc list-inside text-slate-400 mt-2 space-y-1 pl-4">
+                        <li>Assisted in daily banking operations.</li>
+                        <li>Learned about customer service and banking procedures.</li>
+                        <li>Participated in data entry and record-keeping tasks.</li>
+                    </ul>
+                </div>
+                <div class="volunteer-item border-t border-slate-700 pt-6">
+                    <h3 class="text-xl font-semibold text-cyan-300">Designer</h3>
+                    <div class="text-md text-slate-400 my-1">2023/7/3 - 2023/8/8</div>
+                    <p class="text-slate-300 font-medium">Raparin Youth Organization</p>
+                    <ul class="list-disc list-inside text-slate-400 mt-2 space-y-1 pl-4">
+                        <li>Create posters and advertisements for activities.</li>
+                        <li>Designing graphics for social media posts.</li>
+                        <li>Create flex for the organization.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="skills-modal" class="modal hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-6 sm:p-8 z-50" onclick="closeModalIfOutside(event, 'skills-modal')">
+        <div class="modal-content bg-slate-800 text-slate-200 p-6 rounded-xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto relative border border-cyan-500/30">
+            <button class="absolute top-4 right-4 text-slate-400 hover:text-white transition text-2xl leading-none" onclick="closeModal('skills-modal')">×</button>
+            <h2 class="text-2xl font-semibold text-white mb-6">Skills</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
+                <span class="bg-slate-700 text-cyan-300 px-4 py-2 rounded-lg">Photoshop</span>
+                <span class="bg-slate-700 text-cyan-300 px-4 py-2 rounded-lg">PremierPro</span>
+                <span class="bg-slate-700 text-cyan-300 px-4 py-2 rounded-lg">AfterEffect</span>
+                <span class="bg-slate-700 text-cyan-300 px-4 py-2 rounded-lg">HTML/CSS</span>
+                <span class="bg-slate-700 text-cyan-300 px-4 py-2 rounded-lg">JavaScript</span>
+                <span class="bg-slate-700 text-cyan-300 px-4 py-2 rounded-lg">Bootstrap</span>
+                <span class="bg-slate-700 text-cyan-300 px-4 py-2 rounded-lg">SQL</span>
+                <span class="bg-slate-700 text-cyan-300 px-4 py-2 rounded-lg">C#</span>
+                <span class="bg-slate-700 text-cyan-300 px-4 py-2 rounded-lg">Excel</span>
+                <span class="bg-slate-700 text-cyan-300 px-4 py-2 rounded-lg">Word</span>
+                <span class="bg-slate-700 text-cyan-300 px-4 py-2 rounded-lg">Network Beginner</span>
+                <span class="bg-slate-700 text-cyan-300 px-4 py-2 rounded-lg">UI/UX Design Beginner</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="certificates-modal" class="modal hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-6 sm:p-8 z-50" onclick="closeModalIfOutside(event, 'certificates-modal')">
+         <!-- Certificate links are kept as in original -->
+        <div class="modal-content bg-slate-800 text-slate-200 p-6 rounded-xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto relative border border-cyan-500/30">
+            <button class="absolute top-4 right-4 text-slate-400 hover:text-white transition text-2xl leading-none" onclick="closeModal('certificates-modal')">×</button>
+            <h2 class="text-2xl font-semibold text-white mb-6">Certificates & Courses</h2>
+            <div class="space-y-3">
+                <a href="https://www.udemy.com/certificate/UC-261985f7-d990-4b92-887a-9fb269d7bc58/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Adobe After Effects: From Beginner to Motion Master</h3><p class="text-xs text-slate-400 mt-1">2024 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-1a55054a-a610-4b99-a090-e9a0b2939dfb/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Computer Networks Fundamentals</h3><p class="text-xs text-slate-400 mt-1">2024 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-e7378bd9-52da-4e84-9af7-346bae7799b0/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">IP Addressing and Subnetting - Zero to Hero</h3><p class="text-xs text-slate-400 mt-1">2024 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-fda519e7-68ac-49d6-9d8c-c586109eda32/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Microsoft Excel 2024: Beginner to Excel Pro in only 6 hours</h3><p class="text-xs text-slate-400 mt-1">2024 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-8d9012be-5d50-4668-adf7-7f2a43f355c9/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Excel Mastery | Become a Master At Excel From Start to End</h3><p class="text-xs text-slate-400 mt-1">2024 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-f3afdf4e-7985-4ce4-8d02-f48425df42aa/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">UI/UX Design With Figma : 5+ Real World Projects</h3><p class="text-xs text-slate-400 mt-1">2024 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-c424df35-0095-4783-89fb-41c45ad1141a/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Adobe After Effects Basics</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-40fccb81-12d2-4f1f-b231-261323d9a807/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Complete Graphics Design Course for Beginner to Advanced</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-6c565f63-5160-4686-a778-04e183edffd2/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Youtube Masterclass With Video Editing and Graphics Design</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                 <a href="https://www.udemy.com/certificate/UC-6171cd6d-7692-4fdd-9b93-74f120c2d2a9/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">All in One Video Editing Masterclass with Camtasia</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-08043df9-bcc7-42d9-8e92-92caaa86b303/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Adobe Premiere Pro Advanced Video Editing Course</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-bbc025b3-d778-4417-a7b9-19b81851b26a/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Advanced Microsoft Word With Job Success</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-69ee81e6-92cc-4898-8d97-3c8904bc625a/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Beginner's Gateway: Excel Fundamentals and Beyond</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-186bf367-d8be-44b9-8111-50531268eeca/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Complete Graphics Design and Video Editing Masterclass</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-a936dfce-f1b7-406d-9df1-80eb35aed81e/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Photoshop & Design For Content Marketing, ads & Social Media</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-be347946-91bc-46f9-aa77-671c54f0880e/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Photoshop For Architects : Zero to Hero on</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-6c727927-65c7-492e-9347-fdb36a0692f5/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">The Complete Microsoft Word Course: Master Microsoft Word</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-f4a7e062-cbb3-4215-b5fd-4cfce1139642/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">PowerPoint from Zero to Pro</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://drive.google.com/file/d/1AhEh8VlOl1P8KoRzlaMuGEPN_JBtdXdU/view" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Raparin Youth Organization ( Designer )</h3><p class="text-xs text-slate-400 mt-1">2023 - Raparin Youth Organization</p></a>
+                <a href="https://www.udemy.com/certificate/UC-48bc5595-b482-4982-ab04-e9385dbf7c88/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Premiere Plus: 30 days challenge to learn Adobe Premiere Pro</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-6c777d58-af11-423a-8d2d-006bc0084442/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">CSS - Basics to Adv for front end development</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-28b80e77-afe4-48cd-8203-206e4ecaee9a/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">Photoshop plus : 30 days challenge to learn adobe photoshop</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://www.udemy.com/certificate/UC-24d64a9f-a8e0-4cbb-abdd-6921e42a2047/" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">HTML5 - From Basics to Advanced level</h3><p class="text-xs text-slate-400 mt-1">2023 - Udemy</p></a>
+                <a href="https://drive.google.com/file/d/19jqsoL2fPZX0urWI657RWWYSfAtfO3rG/view" target="_blank" class="block p-4 bg-slate-700 rounded-lg hover:bg-slate-600/80 transition group"><h3 class="font-semibold text-cyan-300 group-hover:text-cyan-200 text-md">HTML CSS Bootstrap</h3><p class="text-xs text-slate-400 mt-1">2023 - VOID</p></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Design Modal with Slider Structure -->
+    <div id="design-modal" class="modal hidden fixed inset-0 bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6 z-[60]" onclick="closeModalIfOutside(event, 'design-modal')">
+        <div class="modal-content bg-slate-800/80 text-slate-200 p-3 sm:p-4 rounded-xl shadow-2xl w-full max-w-4xl lg:max-w-5xl max-h-[85vh] sm:max-h-[90vh] relative border border-cyan-500/30 flex flex-col overflow-hidden">
+            <div class="flex justify-between items-center mb-3 sm:mb-4 px-2 shrink-0">
+                <h2 class="text-xl sm:text-2xl font-semibold text-white">Design Examples</h2>
+                 <!-- Increased z-index slightly -->
+                <button class="text-slate-400 hover:text-white transition text-2xl sm:text-3xl leading-none z-[110]" onclick="closeModal('design-modal')">×</button>
+            </div>
+            
+            <!-- Slider Structure goes here -->
+             <!-- Added items-center -->
+            <div class="gallery-container flex-grow min-h-0 flex flex-col justify-center items-center"> 
+                 <div class="slider-container" id="designSliderContainer">
+                    <div class="slides-wrapper" id="designSlidesWrapper">
+                        <!-- Slides will be populated by JS -->
+                    </div>
+                    
+                    <!-- Arrows use the new design-specific click handlers -->
+                    <button class="nav-arrow prev" onclick="changeDesignSlide(1)">‹</button>
+                    <button class="nav-arrow next" onclick="changeDesignSlide(-1)">›</button>
+                </div>
+                
+                <div class="dots-container" id="designDotsContainer">
+                    <!-- Dots will be populated by JS -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="web-modal" class="modal hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-6 sm:p-8 z-50" onclick="closeModalIfOutside(event, 'web-modal')">
+        <div class="modal-content bg-slate-800 text-slate-200 p-6 rounded-xl shadow-2xl w-full max-w-md max-h-[85vh] overflow-y-auto relative border border-cyan-500/30">
+            <button class="absolute top-4 right-4 text-slate-400 hover:text-white transition text-2xl leading-none" onclick="closeModal('web-modal')">×</button>
+            <h2 class="text-2xl font-semibold text-white mb-6">Web Examples</h2>
+            <div class="space-y-4">
+                <button onclick="window.open('https://kurdipolii-yakamm.vercel.app/', '_blank');" class="w-full bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white font-medium py-3 px-4 rounded-lg transition transform hover:scale-105 shadow-md hover:shadow-lg">کـــوردی پۆلـی یــەکەم</button>
+                <button onclick="window.open('https://network-app20362025.vercel.app/', '_blank');" class="w-full bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white font-medium py-3 px-4 rounded-lg transition transform hover:scale-105 shadow-md hover:shadow-lg">IP & Subnet Calculator</button>
+                <button onclick="window.open('https://change-number-to-text-zpo9.vercel.app/', '_blank');" class="w-full bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white font-medium py-3 px-4 rounded-lg transition transform hover:scale-105 shadow-md hover:shadow-lg">Number to Text</button>
+                <button onclick="window.open('https://iraqi-pension-law.vercel.app/', '_blank');" class="w-full bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white font-medium py-3 px-4 rounded-lg transition transform hover:scale-105 shadow-md hover:shadow-lg">Iraqi Pension Law</button>
+                <button onclick="window.open('https://vlsm-calculaitor.vercel.app/', '_blank');" class="w-full bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white font-medium py-3 px-4 rounded-lg transition transform hover:scale-105 shadow-md hover:shadow-lg">VLSM Calculator</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+    let currentOpenModalId = null;
+    // IMPORTANT: Ensure the 'images' folder exists and contains these files
+    const designImages = [
+        "images/1.jpg", "images/2.jpg", "images/3.jpg", "images/4.jpg",
+        "images/5.jpg", "images/6.jpg", "images/7.jpg", "images/8.png",
+        "images/9.png", "images/10.png", "images/11.png", "images/13.jpg"
+    ];
+    // Fallback if images folder is empty or paths wrong - remove for production
+    // if (designImages.length === 0) {
+    //    for(let i=1; i<=12; i++) designImages.push(`https://via.placeholder.com/280x280/475569/ffffff?text=Image+${i}`);
+    // }
+
+
+    // --- Slider Variables for Design Modal ---
+    let designCurrentSlide = 0;
+    let designTotalSlides = designImages.length;
+    let designAutoScrollSpeed = 0.8; // Speed factor
+    let designAnimationId = null;
+    let designCurrentTransform = 0;
+    // FIX: Width must match CSS flex-basis + margin*2 (300+10+10)
+    let designSlideWidth = 320; // Default value, updated on resize and setup
+    let designSliderElements = {};
+    let isAutoScrolling = false; // **FIX: Flag to control auto-scroll - starts as false**
+    let designStartX = 0;
+    let designTouchDiff = 0;
+
+
+    // --- Slider Functions for Design Modal ---
+
+    function getDesignSliderElements() {
+         designSliderElements.container = document.getElementById('designSliderContainer');
+         designSliderElements.wrapper = document.getElementById('designSlidesWrapper');
+         designSliderElements.dotsContainer = document.getElementById('designDotsContainer');
+         designSliderElements.allSlides = () => designSliderElements.wrapper ? designSliderElements.wrapper.querySelectorAll('.slide') : [];
+         designSliderElements.allDots = () => designSliderElements.dotsContainer ? designSliderElements.dotsContainer.querySelectorAll('.dot') : [];
+    }
+
+    function createDesignDots() {
+        if (!designSliderElements.dotsContainer || designTotalSlides === 0) return;
+        designSliderElements.dotsContainer.innerHTML = '';
+         // Only create dots if more than one slide
+        if (designTotalSlides > 1) {
+            for (let i = 0; i < designTotalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                if (i === 0) dot.classList.add('active');
+                 // Pass event to prevent click propagating to modal background
+                dot.onclick = (e) => {
+                    e.stopPropagation();
+                    goToDesignSlide(i);
+                 }
+                designSliderElements.dotsContainer.appendChild(dot);
+            }
+             designSliderElements.dotsContainer.style.display = 'flex';
+        } else {
+             designSliderElements.dotsContainer.style.display = 'none'; // Hide if only one slide
+        }
+    }
+
+    function createDesignSlides() {
+         if (!designSliderElements.wrapper || designTotalSlides === 0) {
+             if(designSliderElements.wrapper) designSliderElements.wrapper.innerHTML = ''; // Clear wrapper if no images
+             // Handle empty state if needed, e.g., show a message
+              const noImagesMessage = document.createElement('p');
+              noImagesMessage.className = 'text-center text-slate-400';
+              noImagesMessage.textContent = 'No design examples available.';
+              if(designSliderElements.container) designSliderElements.container.appendChild(noImagesMessage);
+
+              // Hide arrows and dots
+             document.querySelectorAll('#design-modal .nav-arrow').forEach(a => a.style.display = 'none');
+             if(designSliderElements.dotsContainer) designSliderElements.dotsContainer.style.display = 'none';
+
+             return;
+         }
+
+        designSliderElements.wrapper.innerHTML = '';
+
+        // Create duplicates for seamless looping IF more than one slide
+         const slidesToCreate = designTotalSlides > 1 ? [...designImages, ...designImages] : designImages;
+
+         slidesToCreate.forEach((src, index) => {
+             const slideDiv = document.createElement('div');
+             slideDiv.className = 'slide';
+
+             const contentDiv = document.createElement('div');
+             contentDiv.className = 'slide-content';
+              contentDiv.onclick = (e) => e.stopPropagation(); // Prevent click closing modal
+
+             const img = document.createElement('img');
+             img.src = src;
+             img.alt = `Design Example ${index % designTotalSlides + 1}`;
+              img.onerror = () => { // Fallback for missing images
+                 img.src = 'https://via.placeholder.com/280/475569/64748b?text=Image+Not+Found';
+             };
+
+             contentDiv.appendChild(img);
+             slideDiv.appendChild(contentDiv);
+             designSliderElements.wrapper.appendChild(slideDiv);
+         });
+
+         // Set the initial center slide
+         const initialCenterIndex = designTotalSlides > 1 ? 0 : 0; // Start at the first original slide
+         const firstSlideElement = designSliderElements.wrapper.querySelector('.slide');
+         if(firstSlideElement) {
+             firstSlideElement.classList.add('center');
+             designCurrentSlide = initialCenterIndex;
+         }
+
+           // Show/Hide arrows based on slide count
+          document.querySelectorAll('#design-modal .nav-arrow').forEach(a => a.style.display = designTotalSlides > 1 ? 'flex' : 'none');
+
+    }
+
+    function updateDesignCenterSlide() {
+         if (!designSliderElements.container || designTotalSlides <= 1 ) return; // Only update for >1 slide
+
+         const slides = designSliderElements.allSlides();
+         const dots = designSliderElements.allDots();
+         if (slides.length === 0 || dots.length === 0) return;
+
+         const containerRect = designSliderElements.container.getBoundingClientRect();
+         const containerCenterX = containerRect.left + containerRect.width / 2;
+
+         let centerSlideIndex = -1;
+         let minDistance = Infinity;
+
+         // Find the slide element closest to the center of the container
+         slides.forEach((slide, index) => {
+             const slideRect = slide.getBoundingClientRect();
+              // Optimization: Only check slides potentially visible or near the edge
+              if(slideRect.right < containerRect.left - designSlideWidth || slideRect.left > containerRect.right + designSlideWidth) return;
+
+             const slideCenterX = slideRect.left + slideRect.width / 2;
+             const distance = Math.abs(slideCenterX - containerCenterX);
+
+             if (distance < minDistance) {
+                 minDistance = distance;
+                 // The center slide index should correspond to the ORIGINAL image index
+                 centerSlideIndex = index % designTotalSlides;
+             }
+         });
+
+         // Apply classes only if a valid center slide is determined
+        if (centerSlideIndex !== -1) {
+             designCurrentSlide = centerSlideIndex; // Store the index of the currently centered ORIGINAL image
+             slides.forEach((slide, index) => {
+                 const originalIndex = index % designTotalSlides;
+                 slide.classList.toggle('center', originalIndex === designCurrentSlide);
+             });
+             dots.forEach((dot, index) => {
+                 dot.classList.toggle('active', index === designCurrentSlide);
+             });
+         }
+      }
+
+    // FIX: Added isAutoScrolling check
+    function autoDesignScroll() {
+        // **FIX: Check isAutoScrolling flag**
+        if (!designSliderElements.wrapper || !isAutoScrolling || designTotalSlides <= 1) {
+             designAnimationId = null; // Clear the animation frame ID if we stop
+            return;
+         }
+        designSliderElements.wrapper.style.transition = 'none'; // Ensure no CSS transition interferes
+        designCurrentTransform -= designAutoScrollSpeed;
+        const maxTransform = -(designSlideWidth * designTotalSlides);
+
+         // Loop back when we pass the end of the first set of original slides
+        if (designCurrentTransform <= maxTransform) {
+            designCurrentTransform = designCurrentTransform - maxTransform; // Jump back to the equivalent position in the duplicated set
+        }
+         designSliderElements.wrapper.style.transform = `translateX(${designCurrentTransform}px)`;
+         updateDesignCenterSlide();
+         designAnimationId = requestAnimationFrame(autoDesignScroll);
+     }
+
+    // Helper to restart scroll after manual interaction
+    function restartAutoScroll() {
+         // **FIX: Only restart if isAutoScrolling is true**
+         if (isAutoScrolling && !designAnimationId && designTotalSlides > 1) {
+             designAnimationId = requestAnimationFrame(autoDesignScroll);
+         }
+    }
+     // Helper to pause scroll
+     function pauseAutoScroll() {
+         cancelAnimationFrame(designAnimationId);
+         designAnimationId = null;
+     }
+
+
+    // FIX: Direction logic & Pause/Resume scroll
+    function changeDesignSlide(direction) { // direction: 1 for left arrow (‹), -1 for right arrow (›)
+         // Stop click propagating and closing modal
+         if (window.event) window.event.stopPropagation();
+         if (!designSliderElements.wrapper || designTotalSlides <= 1) return;
+
+         pauseAutoScroll(); // **FIX: Pause auto scroll on manual interaction**
+
+         // Calculate the target transform to move to the next/previous *logical* slide position
+         // We calculate based on the current transform to maintain smooth transition
+         const targetTransform = designCurrentTransform + (direction * designSlideWidth);
+
+         designSliderElements.wrapper.style.transition = 'transform 0.4s ease-out';
+         designSliderElements.wrapper.style.transform = `translateX(${targetTransform}px)`;
+
+         const handleTransitionEnd = () => {
+             if (!designSliderElements.wrapper) return;
+              designSliderElements.wrapper.style.transition = 'none'; // Disable transition for potential jump
+              // Update transform AFTER transition
+              const style = window.getComputedGCSStyle(designSliderElements.wrapper); // Using GCS for safety
+              const matrix = new DOMMatrixReadOnly(style.transform);
+              designCurrentTransform = matrix.m41;
+
+               // Handle looping after transition
+               const maxTransform = -(designSlideWidth * designTotalSlides);
+               // If moved past the beginning (forward loop point)
+               if (designCurrentTransform > 0) {
+                   designCurrentTransform = designCurrentTransform + maxTransform; // Jump back by one full set
+                   designSliderElements.wrapper.style.transform = `translateX(${designCurrentTransform}px)`;
+               }
+               // If moved past the end (backward loop point)
+                else if (designCurrentTransform <= maxTransform) {
+                   designCurrentTransform = designCurrentTransform - maxTransform; // Jump forward by one full set
+                   designSliderElements.wrapper.style.transform = `translateX(${designCurrentTransform}px)`;
+                }
+
+
+             updateDesignCenterSlide(); // Update center slide and dots
+
+             designSliderElements.wrapper.removeEventListener('transitionend', handleTransitionEnd);
+              // FIX: Restart auto scroll after manual move finishes
+             setTimeout(restartAutoScroll, 500); // Wait a bit before restarting auto scroll
+         };
+         designSliderElements.wrapper.addEventListener('transitionend', handleTransitionEnd, { once: true });
+    }
+
+    // FIX: Pause/Resume scroll
+    function goToDesignSlide(slideIndex) {
+         if (!designSliderElements.wrapper || slideIndex < 0 || slideIndex >= designTotalSlides || designTotalSlides <= 1) return;
+
+          pauseAutoScroll(); // **FIX: Pause auto scroll on manual interaction**
+
+         // Calculate the target transform to bring the selected slide to the center
+         // This calculation is trickier with the loop, needs to target the *closest* instance
+         // For simplicity, let's calculate based on bringing the *first* instance of the target slide to the initial center position (which is 0 transform)
+         // This assumes the initial state is aligned such that index 0 is centered at transform 0.
+         // A more robust method would calculate the current center slide and target the equivalent slide in the next/previous set.
+         // Let's stick to the simpler method for now, aligning the target slide to the start (transform 0)
+         const targetTransform = -(slideIndex * designSlideWidth);
+
+
+         designSliderElements.wrapper.style.transition = 'transform 0.4s ease-out';
+         designSliderElements.wrapper.style.transform = `translateX(${targetTransform}px)`;
+
+         const handleTransitionEnd = () => {
+             if (!designSliderElements.wrapper) return;
+             designSliderElements.wrapper.style.transition = 'none';
+             // Update transform AFTER transition
+             const style = window.getComputedGCSStyle(designSliderElements.wrapper); // Using GCS for safety
+             const matrix = new DOMMatrixReadOnly(style.transform);
+             designCurrentTransform = matrix.m41;
+             // Looping might be needed here too if jumping far? Let's re-evaluate.
+             // Simple dot click usually means snap, not seamless loop jump.
+             // So perhaps no loop adjustment needed on transition end for dot clicks.
+
+             updateDesignCenterSlide(); // Update center slide and dots
+
+             designSliderElements.wrapper.removeEventListener('transitionend', handleTransitionEnd);
+              // FIX: Restart auto scroll after manual move finishes
+             setTimeout(restartAutoScroll, 500); // Wait a bit before restarting auto scroll
+        };
+         designSliderElements.wrapper.addEventListener('transitionend', handleTransitionEnd, { once: true });
+    }
+     // Helper to get computed style (handles potential issues)
+     function getComputedGCSStyle(element) {
+        return element.ownerDocument.defaultView.getComputedStyle(element);
+    }
+
+    // FIX: Pause scroll
+    function handleDesignTouchStart(e) {
+         // **FIX: Check if design modal is the current open modal**
+         if (currentOpenModalId !== 'design-modal' || !designSliderElements.container || designTotalSlides <= 1) return;
+         designStartX = e.touches[0].clientX;
+         designTouchDiff = 0; // Reset diff
+         pauseAutoScroll(); // **FIX: Pause auto scroll on touch start**
+         designSliderElements.wrapper.style.transition = 'none'; // Disable transition during drag
+    }
+
+    // Add Touch Move for dragging feel
+     function handleDesignTouchMove(e) {
+         // **FIX: Check if design modal is the current open modal**
+         if (currentOpenModalId !== 'design-modal' || !designSliderElements.container || designStartX === 0 || designTotalSlides <= 1) return;
+          const currentX = e.touches[0].clientX;
+          designTouchDiff = designStartX - currentX;
+          // Live drag effect: Apply the difference *relative to the current transform*
+          designSliderElements.wrapper.style.transform = `translateX(${designCurrentTransform - designTouchDiff}px)`;
+     }
+
+
+     // FIX: Restart scroll handled by changeDesignSlide or timeout
+    function handleDesignTouchEnd(e) {
+         // **FIX: Check if design modal is the current open modal**
+         if (currentOpenModalId !== 'design-modal' || !designSliderElements.container || designTotalSlides <= 1) return;
+
+          // The swipe handling will call changeDesignSlide which handles transition and restart
+          handleDesignSwipe();
+
+           // If no swipe occurred (diff was too small), snap back and restart scroll
+          const swipeThreshold = designSlideWidth / 8; // Smaller threshold for simple tap/release snap
+          if (Math.abs(designTouchDiff) <= swipeThreshold) {
+               designSliderElements.wrapper.style.transition = 'transform 0.2s ease-out'; // Snap back transition
+               designSliderElements.wrapper.style.transform = `translateX(${designCurrentTransform}px)`; // Snap back to where it was before drag
+                // **FIX: Restart auto scroll after snap back finishes**
+               setTimeout(restartAutoScroll, 250); // Wait for snap back transition
+          }
+
+           designStartX = 0; // Reset touch start
+           designTouchDiff = 0; // Reset touch diff
+    }
+
+    // FIX: Swipe direction logic reversed to match changeDesignSlide direction
+    function handleDesignSwipe() {
+        const swipeThreshold = designSlideWidth / 4; // Swipe threshold
+         // Use diff calculated in touchMove
+        if (Math.abs(designTouchDiff) > swipeThreshold) {
+            if (designTouchDiff > 0) {
+                // Swiped Left (finger moved left), so user wants to see the NEXT slide
+                changeDesignSlide(-1);
+            } else {
+                // Swiped Right (finger moved right), so user wants to see the PREVIOUS slide
+                changeDesignSlide(1);
+            }
+        }
+    }
+
+     // FIX: Corrected width values to match CSS, added pause/restart scroll
+    function handleDesignResize() {
+         // **FIX: Check if design modal is the current open modal**
+        if (currentOpenModalId !== 'design-modal' || !designSliderElements.wrapper || designTotalSlides <= 1) return;
+
+         pauseAutoScroll(); // **FIX: Pause auto scroll during resize**
+
+         // CSS: 480=200+20=220, 768=250+20=270, def=300+20=320
+         const newSlideWidth = window.innerWidth <= 480 ? 220 : window.innerWidth <= 768 ? 270 : 320;
+
+         if (newSlideWidth !== designSlideWidth) {
+             designSlideWidth = newSlideWidth;
+              // Recalculate current transform based on the *currentSlide index* and the *new* width
+             designCurrentTransform = -(designCurrentSlide * designSlideWidth); // This assumes original index 0 starts at transform 0
+
+             designSliderElements.wrapper.style.transition = 'none';
+             designSliderElements.wrapper.style.transform = `translateX(${designCurrentTransform}px)`;
+
+             // Use requestAnimationFrame to ensure layout is updated before checking center
+             requestAnimationFrame(() => {
+                 updateDesignCenterSlide();
+                 restartAutoScroll(); // **FIX: Restart auto scroll after resize**
+             });
+         } else {
+             // If width didn't change, just ensure center is correct and restart scroll
+              requestAnimationFrame(() => {
+                  updateDesignCenterSlide();
+                  restartAutoScroll(); // **FIX: Restart auto scroll if width didn't change but resize happened**
+             });
+         }
+    }
+
+    // --- Modal Functions ---
+
+    // FUNCTION: openModal - Opens a specific modal and manages global state/cleanup
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal && modal.classList.contains('modal')) {
+            // **FIX: Close and cleanup the currently open modal BEFORE opening a new one**
+            if (currentOpenModalId && currentOpenModalId !== modalId) {
+                 const previouslyOpenModal = document.getElementById(currentOpenModalId);
+                 if (previouslyOpenModal && !previouslyOpenModal.classList.contains('hidden')) {
+                     // Perform specific cleanup for the previously open modal
+                     if (currentOpenModalId === 'design-modal') {
+                         cleanupDesignSlider();
+                     }
+                     // Add cleanup for other specific modals here if needed
+                     previouslyOpenModal.classList.add('hidden');
+                 }
+             } else if (currentOpenModalId === modalId) {
+                 // If trying to open the modal that is already open, do nothing
+                 return;
+             }
+
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            currentOpenModalId = modalId; // Update the currently open modal
+
+             // Perform specific setup for the newly opened modal
+             if (modalId === 'design-modal') {
+                 // Use a slight delay to ensure modal is visible and elements are sized
+                 setTimeout(setupDesignSlider, 50);
+             }
+              // Add specific setup for other work modals here if needed
+              // else if (modalId === 'web-modal') { /* ... */ }
+        } else {
+             console.error(`Modal element with ID "${modalId}" not found or is not a valid modal.`);
+         }
+    }
+
+    // FUNCTION: closeModal - Closes a specific modal and cleans up
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        // **FIX: Ensure we only try to close the modal IF it's the one currently tracked OR if no modal is tracked but this one is visible (fallback)**
+        if (modal && !modal.classList.contains('hidden') && (currentOpenModalId === modalId || currentOpenModalId === null)) {
+
+             // **FIX: Perform specific cleanup for the closing modal *before* hiding it**
+             if (modalId === 'design-modal') {
+                 cleanupDesignSlider();
+             }
+             // Add cleanup for other specific modals here if needed
+             // else if (modalId === 'web-modal') { /* ... */ }
+
+            modal.classList.add('hidden');
+
+             // **FIX: Always unlock scroll and clear currentOpenModalId when a modal is closed**
+             // With history removed, closing a modal *always* means returning to the base state.
+             document.body.style.overflow = 'auto';
+             currentOpenModalId = null; // Clear the tracking variable
+
+             // **FIX: No history interaction needed here.**
+
+             // Ensure the default button is active when returning to base page (optional but good UX)
+              const defaultButton = document.querySelector('.work-category-btn[data-category="design"]');
+              if(defaultButton) activateButton(defaultButton); // Ensure default is active on close
+              document.querySelectorAll('.work-category-btn:not([data-category="design"])').forEach(btn => btn.dataset.active = "false");
+        }
+         // If modal is already hidden or it's not the tracked modal (which shouldn't happen with correct flow), do nothing.
+    }
+
+     // FUNCTION: closeModalIfOutside - Closes modal if click is on background
+    function closeModalIfOutside(event, modalId) {
+         // Check if the click target is the modal background itself, not inside the modal-content
+         // **FIX: Also check if the modal is actually open and the current tracked one**
+         if (currentOpenModalId === modalId && event.target.classList.contains('modal') && event.target.id === modalId) {
+             closeModal(modalId);
+         }
+     }
+
+
+     // **FIX: openWorkModal simplified - just activates button and calls generic openModal**
+    function openWorkModal(modalId) {
+         // Ensure the correct button is activated
+         const button = document.querySelector(`.work-category-btn[data-category="${modalId.replace('-modal', '')}"]`);
+         if(button) activateButton(button);
+
+         // Call the generic openModal function, which now handles cleanup of the previous modal
+         openModal(modalId);
+    }
+
+    function activateButton(button) {
+        if(!button) return;
+        const buttons = document.querySelectorAll('.work-category-btn');
+        buttons.forEach(btn => btn.dataset.active = "false");
+        button.dataset.active = "true";
+    }
+
+    // **FIX: DOMContentLoaded simplified - just activates default button**
+    document.addEventListener('DOMContentLoaded', () => {
+        // On initial page load, simply activate the default button (Design)
+        // We are not managing history or hashes on load anymore.
+        const defaultButton = document.querySelector('.work-category-btn[data-category="design"]'); // Or your preferred default
+        if(defaultButton) {
+             document.querySelectorAll('.work-category-btn').forEach(btn => btn.dataset.active = "false");
+             defaultButton.dataset.active = "true";
+        } else {
+             // If there's no design button, activate the first one found, or none
+             const firstWorkButton = document.querySelector('.work-category-btn');
+             if(firstWorkButton) firstWorkButton.dataset.active = "true";
+        }
+
+        // **FIX: Remove any hash cleaning logic from here.**
+        // The page will just load to the base state regardless of hash.
+    });
+
+     // **FIX: Remove the window.onpopstate handler entirely.**
+     // window.onpopstate = function(event) { ... }; // Removed
+
+     // **FIX: Remove the window.addEventListener('load', ...) handler entirely.**
+     // It was primarily related to history/state recovery.
+
+
+    // --- Slider setup/cleanup functions ---
+    // FIX: Corrected width values, uncommented autoscroll, added isAutoScrolling logic
+    function setupDesignSlider() {
+        getDesignSliderElements();
+        if (!designSliderElements.wrapper || !designSliderElements.dotsContainer || !designSliderElements.container || designTotalSlides === 0) {
+             // Handle case with no images
+             if (designTotalSlides === 0) {
+                 console.warn("No design images provided.");
+                 // Display a message in the modal if needed
+                  const modalContent = document.querySelector('#design-modal .modal-content');
+                  if (modalContent) {
+                      const existingMessage = modalContent.querySelector('.no-images-message');
+                      if (!existingMessage) {
+                         const noImagesMessage = document.createElement('p');
+                         noImagesMessage.className = 'text-center text-slate-400 no-images-message'; // Add class for easy removal
+                         noImagesMessage.textContent = 'No design examples available.';
+                         // Find a place to insert it, maybe after the title
+                          const title = modalContent.querySelector('h2');
+                          if (title) title.after(noImagesMessage); else modalContent.appendChild(noImagesMessage);
+                      }
+                  }
+             }
+             cleanupDesignSlider(); // Ensure cleanup state if setup fails
+             return;
+         }
+
+        // Remove any existing "No images" message
+        const noImagesMessage = document.querySelector('#design-modal .no-images-message');
+        if (noImagesMessage) noImagesMessage.remove();
+
+
+        createDesignSlides();
+        createDesignDots();
+
+        // Reset slide position and transform
+        designCurrentSlide = 0;
+        designCurrentTransform = 0;
+
+        // FIX: Calculate initial slideWidth correctly matching CSS
+         designSlideWidth = window.innerWidth <= 480 ? 220 : window.innerWidth <= 768 ? 270 : 320;
+
+         designSliderElements.wrapper.style.transition = 'none';
+         designSliderElements.wrapper.style.transform = `translateX(${designCurrentTransform}px)`;
+
+        // Need to wait for browser to render elements before calculating positions
+         requestAnimationFrame(() => {
+              updateDesignCenterSlide(); // Set initial center and dots
+
+             // **FIX: Enable and start auto scroll only if more than 1 slide**
+             if (designTotalSlides > 1) {
+                 isAutoScrolling = true;
+                 restartAutoScroll(); // Start the auto scroll loop
+             } else {
+                 isAutoScrolling = false;
+             }
+         });
+
+         // **FIX: Add event listeners only ONCE during setup**
+         // Ensure they haven't been added already if cleanup wasn't perfect (though it should be now)
+         // A more robust way might involve named functions or checking flags, but with reliable cleanup, this is fine.
+         // We rely on cleanup removing them.
+         designSliderElements.container.addEventListener('touchstart', handleDesignTouchStart);
+         designSliderElements.container.addEventListener('touchmove', handleDesignTouchMove); // For dragging
+         designSliderElements.container.addEventListener('touchend', handleDesignTouchEnd);
+         window.addEventListener('resize', handleDesignResize);
+
+         // Ensure arrows are visible if multiple slides
+          document.querySelectorAll('#design-modal .nav-arrow').forEach(a => a.style.display = designTotalSlides > 1 ? 'flex' : 'none');
+    }
+
+    // FIX: pause scroll on cleanup, reset state fully
+    function cleanupDesignSlider() {
+         console.log("Cleaning up Design Slider..."); // Debugging line
+
+         isAutoScrolling = false; // **FIX: Disable auto scroll flag**
+         pauseAutoScroll(); // **FIX: Explicitly stop animation frame**
+
+         // **FIX: Remove event listeners explicitly during cleanup**
+         if (designSliderElements.container) {
+             designSliderElements.container.removeEventListener('touchstart', handleDesignTouchStart);
+              designSliderElements.container.removeEventListener('touchmove', handleDesignTouchMove);
+             designSliderElements.container.removeEventListener('touchend', handleDesignTouchEnd);
+         }
+         window.removeEventListener('resize', handleDesignResize);
+
+
+         if (designSliderElements.wrapper) {
+             designSliderElements.wrapper.innerHTML = ''; // Clear slides
+             designSliderElements.wrapper.style.transform = ''; // Reset transform
+              designSliderElements.wrapper.style.transition = 'none'; // Ensure no lingering transition
+         }
+         if (designSliderElements.dotsContainer) {
+             designSliderElements.dotsContainer.innerHTML = ''; // Clear dots
+             designSliderElements.dotsContainer.style.display = 'none'; // Hide dots container
+         }
+         // Remove any existing "No images" message
+          const noImagesMessage = document.querySelector('#design-modal .no-images-message');
+          if (noImagesMessage) noImagesMessage.remove();
+
+
+         // Reset slider state variables
+         designSliderElements = {}; // Reset the object holding elements
+         designCurrentSlide = 0;
+         designCurrentTransform = 0;
+         designSlideWidth = 320; // Reset to default
+         // isAutoScrolling is already false
+         designAnimationId = null; // Ensure animation ID is null
+         designStartX = 0;
+         designTouchDiff = 0;
+
+          // Ensure arrows are hidden when cleaned up
+          document.querySelectorAll('#design-modal .nav-arrow').forEach(a => a.style.display = 'none');
+
+          console.log("Design Slider cleanup complete."); // Debugging line
+    }
+
+     // FIX: Arrow key directions match button clicks, added pause/restart
+    document.addEventListener('keydown', (event) => {
+         // Handle Escape key globally for any modal
+         if (event.key === 'Escape' && currentOpenModalId) {
+             // Find the currently open modal element to pass its ID to closeModal
+             const modalToClose = document.getElementById(currentOpenModalId);
+             if (modalToClose) {
+                 closeModal(currentOpenModalId);
+             } else {
+                 // Fallback if currentOpenModalId is set but element isn't found/valid
+                 document.body.style.overflow = 'auto';
+                 currentOpenModalId = null;
+                 document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden')); // Hide all just in case
+                 // Reset button states
+                 const defaultButton = document.querySelector('.work-category-btn[data-category="design"]');
+                 if(defaultButton) activateButton(defaultButton); // Ensure default is active
+                 document.querySelectorAll('.work-category-btn:not([data-category="design"])').forEach(btn => btn.dataset.active = "false");
+             }
+         }
+
+         // Handle arrow keys specifically for the design modal ONLY
+         if (currentOpenModalId === 'design-modal' && designTotalSlides > 1) {
+              // Only handle arrows if design modal is open and has multiple slides
+             if (event.key === 'ArrowLeft') {
+                 event.preventDefault(); // Prevent default page scroll
+                 changeDesignSlide(1); // Left arrow means previous slide (move wrapper right)
+             } else if (event.key === 'ArrowRight') {
+                 event.preventDefault(); // Prevent default page scroll
+                 changeDesignSlide(-1); // Right arrow means next slide (move wrapper left)
+             }
+         }
+    });
+
+
+    // Optional: Prevent context menu on touch hold on images inside slides
+    document.addEventListener('contextmenu', (e) => {
+        if (e.target.tagName === 'IMG' && e.target.closest('.slide-content')) {
+            e.preventDefault();
+        }
+    });
+
+
+</script>
+</body>
+</html>
